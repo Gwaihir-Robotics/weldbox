@@ -1,0 +1,31 @@
+[project]
+name = "weldbox"
+version = "0.1.0"
+description = "Generate vendor-ready tube laser cut lists (STEP) and sheet panel DXFs for welded square-tube boxes"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "build123d>=0.8",
+    "ezdxf>=1.3",
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+    "questionary>=2.0",
+    "rich>=13.0",
+]
+
+[project.scripts]
+weldbox = "weldbox.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.0", "pytest-xdist>=3.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/weldbox"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: geometry tests that import OCP (deselect with '-m \"not slow\"')"]

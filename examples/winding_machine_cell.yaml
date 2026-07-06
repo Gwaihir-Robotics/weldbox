@@ -1,0 +1,45 @@
+# PRD example use case — acceptance fixture.
+name: Winding Machine Cell
+vendor: rfmg
+material:
+  shape: square
+  size: [1.5in]
+  wall: 0.120in
+  family: A500
+exterior:
+  height: 2000mm
+  width: 1000mm
+  depth: 800mm
+topology: full_height_posts
+blocking:
+  # a. work surface at 1000mm, 3x evenly spaced cross members front-to-back
+  - type: level
+    name: work-surface
+    height: 1000mm
+    height_ref: top_face
+    cross_members: {count: 3, axis: depth}
+  # b. vertical supports between base and work surface at midpoints
+  - type: supports
+    between: [base, work-surface]
+    at: midpoints
+  # c. midpoint of top extending across the width
+  - type: spanner
+    face: top
+    axis: width
+    position: 0.5
+  # d. midpoint of bottom extending across the width
+  - type: spanner
+    face: bottom
+    axis: width
+    position: 0.5
+siding:
+  attachment:
+    method: rivet
+    rivet: 0.25in
+    spacing: 100mm
+  panels:
+    - faces: [left, right]
+      material: {alloy: "304", thickness: 0.038in}
+    - faces: [back]
+      material: {alloy: "304", thickness: 0.038in}
+quantity: 5

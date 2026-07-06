@@ -1,0 +1,25 @@
+name: Epoxy Machine Cell
+vendor: rfmg
+material:
+  shape: square
+  size: [1.5in]
+  wall: 0.120in
+  family: A500
+exterior:
+  height: 860mm
+  width: 2000mm
+  depth: 660mm
+# top_bottom_frames: the front/back rails of the top and bottom frames run
+# solid across the full 2000mm width; the posts butt up into them.
+topology: top_bottom_frames
+blocking:
+  # vertical supports between the bottom and top frames at rail midpoints
+  - type: supports
+    between: [base, top]
+    at: midpoints
+  # 3 evenly spaced depth-direction spanners on the top and bottom faces
+  - type: spanner
+    face: [top, bottom]
+    axis: depth
+    count: 3
+quantity: 5
