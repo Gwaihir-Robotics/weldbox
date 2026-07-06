@@ -18,7 +18,7 @@ FLAT = TUBE - 2 * CORNER_R  # 25.908
 @pytest.fixture(scope="module")
 def planned():
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     hole_map = plan_features(frame, spec)
     return spec, frame, hole_map
 

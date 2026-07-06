@@ -14,7 +14,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
 @pytest.fixture(scope="module")
 def parts_and_frame():
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     plan_features(frame, spec)
     return group_parts(frame), frame
 
@@ -66,7 +66,7 @@ def test_supports_merge_by_rotation(parts_and_frame):
 def test_flip_symmetry_signature():
     """A part's signature must equal its end-swapped twin's."""
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     plan_features(frame, spec)
     m = frame.member("work-surface-cross-1")
     sig_a = part_signature(m)

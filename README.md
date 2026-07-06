@@ -11,7 +11,7 @@ Generate laser tube cut lists for welded square-tube boxes and machine
 bases. From a single YAML spec, weldbox produces:
 
 - **`parts/*.step`** — one STEP file per unique tube part (deduplicated with
-  quantities), ready to upload to a tube laser service (RFMG, OshCut, Fabworks)
+  quantities), ready to upload to a tube laser service (RMFG, OshCut, Fabworks)
 - **`panels/*.dxf`** — flat patterns for riveted sheet-metal siding, with
   rivet holes that match the holes pre-cut in the tubes
 - **`assembly.step`** — the full assembly for visual review (open in FreeCAD)
@@ -31,7 +31,7 @@ shipping checks, and the full spec reference.
 uv sync
 
 # browse a vendor's tube catalog
-uv run weldbox catalog list --vendor rfmg --shape square
+uv run weldbox catalog list --vendor rmfg --shape square
 
 # check the cut list without generating CAD (fast)
 uv run weldbox generate examples/winding_machine_cell.yaml --dry-run
@@ -72,7 +72,7 @@ millimetres. See `examples/winding_machine_cell.yaml` for a complete example:
 
 ```yaml
 name: Winding Machine Cell
-vendor: rfmg
+vendor: rmfg
 material: {shape: square, size: [1.5in], wall: 0.120in, family: A500}
 exterior: {height: 2000mm, width: 1000mm, depth: 800mm}
 topology: full_height_posts
@@ -127,9 +127,9 @@ quantity: 5
 
 ## Vendors
 
-`rfmg` is fully encoded (from `docs/samples/rfmg/material_list.md`); `oshcut`
+`rmfg` is fully encoded (from `docs/samples/rmfg/material_list.md`); `oshcut`
 and `fabtech` are stubs awaiting material lists. Vendor shipping rules
-(RFMG's LTL freight thresholds, see `docs/samples/rfmg/shipping.md`) drive
+(RMFG's LTL freight thresholds, see `docs/samples/rmfg/shipping.md`) drive
 an order-level estimate: the generator weighs the cut list analytically and
 warns — in the console and on `cutlist.md` — when a part dimension or the
 order weight will trigger freight, with the specific reasons and the flat
@@ -151,14 +151,14 @@ math, no CAD) → `features.py` (tab/slot/hole placement, no CAD) →
 STEP) + `panels/` (DXF) → `manifest.py`.
 
 All dimension and placement math is CAD-free and covered by fast tests;
-geometry tests verify solids against analytic volumes and RFMG's published
+geometry tests verify solids against analytic volumes and RMFG's published
 stock STEP files, and assert zero interference at assembled joints.
 
 ## License and attribution
 
 weldbox is released under the [MIT License](https://github.com/Gwaihir-Robotics/weldbox/blob/main/LICENSE).
 
-The RFMG reference data in `docs/samples/rfmg/` (tube profile
+The RMFG reference data in `docs/samples/rmfg/` (tube profile
 specifications, stock STEP/DXF geometry, and shipping thresholds) is
 published by RMFG as design-against reference material for their laser tube
 cutting service: <https://www.rmfg.com/docs/services/laser-tube-cutting>.

@@ -14,19 +14,19 @@ pytestmark = pytest.mark.slow
 FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
 SAMPLE_STEP = (
     Path(__file__).parent.parent
-    / "docs" / "samples" / "rfmg" / "square_1.5x1.5x0.120.step"
+    / "docs" / "samples" / "rmfg" / "square_1.5x1.5x0.120.step"
 )
 
 
 @pytest.fixture(scope="module")
 def profile():
-    return get_vendor("rfmg").catalog().find("square", 38.1, 38.1, 3.048)
+    return get_vendor("rmfg").catalog().find("square", 38.1, 38.1, 3.048)
 
 
 @pytest.fixture(scope="module")
 def planned_frame():
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     hole_map = plan_features(frame, spec)
     return spec, frame, hole_map
 
@@ -44,7 +44,7 @@ def test_profile_volume_matches_analytic(profile):
 
 
 def test_profile_matches_vendor_sample(profile):
-    """Our generated stub must match RFMG's published stock geometry."""
+    """Our generated stub must match RMFG's published stock geometry."""
     from build123d import import_step
 
     from weldbox.geometry.member import build_part_solid

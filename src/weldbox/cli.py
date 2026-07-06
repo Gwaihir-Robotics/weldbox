@@ -20,7 +20,7 @@ console = Console()
 
 @catalog_app.command("list")
 def catalog_list(
-    vendor: str = typer.Option("rfmg", help=f"Vendor: {', '.join(sorted(VENDORS))}"),
+    vendor: str = typer.Option("rmfg", help=f"Vendor: {', '.join(sorted(VENDORS))}"),
     shape: str = typer.Option(None, help="Filter by shape: square, rect, round"),
 ) -> None:
     """List tube profiles available from a vendor."""
@@ -86,7 +86,7 @@ def generate(
 
 @app.command()
 def coupon(
-    vendor: str = typer.Option("rfmg", help=f"Vendor: {', '.join(sorted(VENDORS))}"),
+    vendor: str = typer.Option("rmfg", help=f"Vendor: {', '.join(sorted(VENDORS))}"),
     size: str = typer.Option("1.5in", help="Square tube outer size (e.g. 1.5in, 25.4mm)"),
     wall: str = typer.Option("0.120in", help="Wall thickness"),
     family: str = typer.Option(None, help="Material family (A500, 304, 6061 T6, ...)"),

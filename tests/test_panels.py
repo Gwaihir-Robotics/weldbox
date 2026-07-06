@@ -16,7 +16,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
 @pytest.fixture(scope="module")
 def panels():
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     hole_map = plan_features(frame, spec)
     return panel_layouts(frame, spec, hole_map)
 
@@ -95,7 +95,7 @@ def test_left_right_panels_consolidate():
     from weldbox.panels.layout import consolidate_panels
 
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     hole_map = plan_features(frame, spec)
     all_panels = panel_layouts(frame, spec, hole_map)
     unique = consolidate_panels(all_panels, enabled=True)

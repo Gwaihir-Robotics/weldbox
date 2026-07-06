@@ -1,6 +1,6 @@
 # PRD example use case — acceptance fixture.
 name: Winding Machine Cell
-vendor: rfmg
+vendor: rmfg
 material:
   shape: square
   size: [1.5in]

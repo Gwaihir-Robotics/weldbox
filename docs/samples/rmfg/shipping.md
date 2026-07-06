@@ -1,4 +1,4 @@
-# RFMG — LTL Freight Shipping
+# RMFG — LTL Freight Shipping
 
 Orders that exceed standard parcel limits require LTL (Less Than Truckload)
 freight shipping. If any of the following thresholds are met, the order will

@@ -14,7 +14,7 @@ TUBE = 38.1  # 1.5in
 @pytest.fixture(scope="module")
 def frame():
     spec = load_spec(FIXTURE)
-    return resolve_frame(spec, get_vendor("rfmg").catalog())
+    return resolve_frame(spec, get_vendor("rmfg").catalog())
 
 
 def by_role(frame, role):
@@ -131,7 +131,7 @@ EPOXY = Path(__file__).parent.parent / "examples" / "epoxy_machine_cell.yaml"
 def ladder_frame():
     spec = load_spec(EPOXY)
     assert spec.topology == "top_bottom_frames"
-    return resolve_frame(spec, get_vendor("rfmg").catalog())
+    return resolve_frame(spec, get_vendor("rmfg").catalog())
 
 
 def test_ladder_full_width_rails(ladder_frame):
@@ -226,32 +226,32 @@ def _spec_with_level(height, height_ref="top_face", exterior_height="860mm"):
 
 def test_level_above_box_message():
     with pytest.raises(ValueError, match=r"above the box .exterior height 860mm."):
-        resolve_frame(_spec_with_level("1000mm"), get_vendor("rfmg").catalog())
+        resolve_frame(_spec_with_level("1000mm"), get_vendor("rmfg").catalog())
     with pytest.raises(ValueError, match=r"must be between 76.2mm and 821.9mm"):
-        resolve_frame(_spec_with_level("1000mm"), get_vendor("rfmg").catalog())
+        resolve_frame(_spec_with_level("1000mm"), get_vendor("rmfg").catalog())
 
 
 def test_level_colliding_with_top_frame_message():
     with pytest.raises(ValueError, match="collides with the base or top frame"):
-        resolve_frame(_spec_with_level("850mm"), get_vendor("rfmg").catalog())
+        resolve_frame(_spec_with_level("850mm"), get_vendor("rmfg").catalog())
 
 
 def test_level_too_low_message():
     with pytest.raises(ValueError, match="collides with the base or top frame"):
-        resolve_frame(_spec_with_level("50mm"), get_vendor("rfmg").catalog())
+        resolve_frame(_spec_with_level("50mm"), get_vendor("rmfg").catalog())
 
 
 def test_level_range_respects_height_ref():
     # centerline range shifts by half a tube vs top_face
     with pytest.raises(ValueError, match=r"must be between 57.15mm and 802.85mm"):
         resolve_frame(
-            _spec_with_level("30mm", height_ref="centerline"), get_vendor("rfmg").catalog()
+            _spec_with_level("30mm", height_ref="centerline"), get_vendor("rmfg").catalog()
         )
 
 
 def test_level_at_range_edges_ok():
     # exactly at the published limits must build
-    frame = resolve_frame(_spec_with_level("821.9mm"), get_vendor("rfmg").catalog())
+    frame = resolve_frame(_spec_with_level("821.9mm"), get_vendor("rmfg").catalog())
     assert "lv" in frame.layers
-    frame = resolve_frame(_spec_with_level("76.2mm"), get_vendor("rfmg").catalog())
+    frame = resolve_frame(_spec_with_level("76.2mm"), get_vendor("rmfg").catalog())
     assert "lv" in frame.layers

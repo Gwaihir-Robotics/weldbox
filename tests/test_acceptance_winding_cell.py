@@ -58,7 +58,7 @@ def test_no_joint_interference():
     from weldbox.consolidate import consolidate_parts
 
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     plan_features(frame, spec)
     consolidate_parts(frame)  # sacrificial cuts must not create interference
 
@@ -91,7 +91,7 @@ def test_ladder_topology_no_joint_interference():
     from weldbox.vendors import get_vendor
 
     spec = load_spec(Path(__file__).parent.parent / "examples" / "epoxy_machine_cell.yaml")
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     plan_features(frame, spec)
     consolidate_parts(frame)
 

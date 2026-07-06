@@ -21,7 +21,7 @@ gives you a complete priced-out cut list in under a second.
 ## 1. The workflow
 
 ```sh
-uv run weldbox catalog list --vendor rfmg          # 1. pick stock
+uv run weldbox catalog list --vendor rmfg          # 1. pick stock
 uv run weldbox wizard                              # 2. author a spec (or write YAML by hand)
 uv run weldbox generate my-box.yaml --dry-run      # 3. sanity-check the cut list + shipping
 uv run weldbox generate my-box.yaml -o out         # 4. produce files
@@ -43,7 +43,7 @@ quietly change your build.
 
 ```yaml
 name: Epoxy Machine Cell        # used for output folder and file names
-vendor: rfmg                    # rfmg | oshcut | fabtech (stubs)
+vendor: rmfg                    # rmfg | oshcut | fabtech (stubs)
 material:                       # catalog lookup key, not free-form:
   shape: square                 #   must match a profile the vendor stocks
   size: [1.5in]                 #   [w] or [w, h]
@@ -254,7 +254,7 @@ out/<name>/
 
 - **Part STEPs** are built in the vendor-stock convention (cross-section
   centered on origin, extruded along +Z) and modeled against the vendor's
-  published geometry — the generated 1.5×1.5×0.120 profile matches RFMG's
+  published geometry — the generated 1.5×1.5×0.120 profile matches RMFG's
   own reference STEP within 0.5%.
 - **The assembly STEP** contains one *named product per member and panel*
   (`post-fl`, `work-surface-cross-2`, `panel-back`, …), colored by role —
@@ -271,7 +271,7 @@ Every run (including `--dry-run`) checks the vendor's design rules
 (minimum hole diameter, dog-bone radius, maximum part length) and estimates
 the **order shipping**: analytic part weights (section area × length ×
 material density; sheet area × thickness) against the vendor's parcel
-limits. For RFMG that means LTL freight is flagged — with the specific
+limits. For RMFG that means LTL freight is flagged — with the specific
 trigger and the $200 flat surcharge — when any part exceeds 100 lb or 60"
 (or 48"×30" on two dimensions), or the order exceeds 200 lb.
 
@@ -280,7 +280,7 @@ trigger and the $200 flat surcharge — when any part exceeds 100 lb or 60"
 ## 9. Test coupons — verify the fit before you commit
 
 ```sh
-weldbox coupon --vendor rfmg --size 1.5in --wall 0.120in \
+weldbox coupon --vendor rmfg --size 1.5in --wall 0.120in \
                --slot-clearance 0.25mm --dogbone 1.0mm -o out
 ```
 
@@ -305,7 +305,7 @@ fit; whatever clearance welds best goes into your real spec's
 Vendor data lives in `src/weldbox/vendors/data/*.yaml` behind a small
 `Vendor` interface (catalog, design rules, shipping rules, file naming):
 
-- **rfmg** — fully encoded: 56 profiles (A500/4130/DOM steel, 304
+- **rmfg** — fully encoded: 56 profiles (A500/4130/DOM steel, 304
   stainless, 6061/6063 aluminum) with published corner radii, design notes,
   and LTL freight thresholds. Source:
   <https://www.rmfg.com/docs/services/laser-tube-cutting>

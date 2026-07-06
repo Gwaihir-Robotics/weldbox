@@ -14,7 +14,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
 
 def build_frame(consolidate: bool):
     spec = load_spec(FIXTURE)
-    frame = resolve_frame(spec, get_vendor("rfmg").catalog())
+    frame = resolve_frame(spec, get_vendor("rmfg").catalog())
     plan_features(frame, spec)
     added = consolidate_parts(frame) if consolidate else {}
     return frame, added

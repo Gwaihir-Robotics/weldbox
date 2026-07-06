@@ -57,13 +57,13 @@ def _load_vendor_catalog(slug: str) -> Catalog:
     return load_catalog(Path(str(data_dir / f"{slug}.yaml")), vendor=slug)
 
 
-class Rfmg(Vendor):
-    slug = "rfmg"
-    display_name = "RFMG"
-    # From RFMG design notes: "Use larger holes and slots for cleaner features".
+class Rmfg(Vendor):
+    slug = "rmfg"
+    display_name = "RMFG"
+    # From RMFG design notes: "Use larger holes and slots for cleaner features".
     # Published limits are not public; conservative defaults.
     rules = DesignRules(min_hole_dia_mm=3.0, min_slot_corner_r_mm=0.5, max_part_length_mm=6000.0)
-    # docs/samples/rfmg/shipping.md
+    # docs/samples/rmfg/shipping.md
     shipping = ShippingRules(
         parcel_max_order_lb=200.0,
         parcel_max_part_lb=100.0,
@@ -87,12 +87,17 @@ class Fabtech(Vendor):
     display_name = "Fabtech"
 
 
-VENDORS: dict[str, Vendor] = {v.slug: v for v in (Rfmg(), Oshcut(), Fabtech())}
+VENDORS: dict[str, Vendor] = {v.slug: v for v in (Rmfg(), Oshcut(), Fabtech())}
+
+# historical misspelling of rmfg, kept so specs written against <= 0.2.0 load
+_ALIASES = {"rfmg": "rmfg"}
 
 
 def get_vendor(slug: str) -> Vendor:
+    key = slug.lower()
+    key = _ALIASES.get(key, key)
     try:
-        return VENDORS[slug.lower()]
+        return VENDORS[key]
     except KeyError:
         raise LookupError(
             f"unknown vendor {slug!r}; available: {', '.join(sorted(VENDORS))}"

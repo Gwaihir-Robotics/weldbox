@@ -4,9 +4,9 @@ Profiles are loaded from per-vendor YAML files (see vendors/data/*.yaml),
 hand-encoded from each vendor's published material list. Dimensions in the
 YAML are inches (as published); they are converted to mm on load.
 
-Corner radius: some vendor tables (e.g. RFMG stainless and aluminum) omit
+Corner radius: some vendor tables (e.g. RMFG stainless and aluminum) omit
 the outside corner radius. Where missing on a square/rect profile we fall
-back to 2 x wall, which matches every steel row RFMG does publish.
+back to 2 x wall, which matches every steel row RMFG does publish.
 """
 
 from __future__ import annotations

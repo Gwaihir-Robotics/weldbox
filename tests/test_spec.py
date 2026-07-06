@@ -10,7 +10,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
 def test_load_acceptance_fixture():
     spec = load_spec(FIXTURE)
     assert spec.name == "Winding Machine Cell"
-    assert spec.vendor == "rfmg"
+    assert spec.vendor == "rmfg"
     assert spec.exterior.height == 2000.0
     assert spec.exterior.width == 1000.0
     assert spec.exterior.depth == 800.0

@@ -9,7 +9,7 @@ https://tube.oshcut.com/
 https://www.rmfg.com/laser-tube-cutting
 
 
-I would like to be able to spec the outer dimentions of a box (larger than 12" x 12" x 12") and have the pieces automatically generated as a cut list (multiple step files) for easy upload to the services. I have attached step and/or dfx  patterns for RFMG and OshCut in /docs/samples/<vendor_name>/**
+I would like to be able to spec the outer dimentions of a box (larger than 12" x 12" x 12") and have the pieces automatically generated as a cut list (multiple step files) for easy upload to the services. I have attached step and/or dfx  patterns for RMFG and OshCut in /docs/samples/<vendor_name>/**
 
 I have also put tables (partial) of the materials offered as a markdown file in /docs/samples/<vendor_name>/material_list.md
 
@@ -25,7 +25,7 @@ In tube laser cutting, tab-and-slot connections (or hook-in-slot designs) allow 
 Example Use Case:
 
 Name: Winding Machine Cell
-Vendor: RFMG
+Vendor: RMFG
 Material: 1.5 x 1.5 x .120 in Square Tube	Square	1.5" × 1.5"	wall-thickness:0.12	corner-radus:0.24
 Exterior Size:
   height: 2000mm

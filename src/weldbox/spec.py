@@ -134,7 +134,7 @@ class SidingSpec(SpecModel):
 
 class BoxSpec(SpecModel):
     name: str
-    vendor: str = "rfmg"
+    vendor: str = "rmfg"
     material: MaterialRef
     exterior: Exterior
     topology: Literal["full_height_posts", "top_bottom_frames"] = "full_height_posts"

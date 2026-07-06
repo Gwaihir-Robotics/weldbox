@@ -40,7 +40,7 @@ def test_small_box_is_parcel():
     spec = BoxSpec.model_validate(
         {
             "name": "toolbox",
-            "vendor": "rfmg",
+            "vendor": "rmfg",
             "material": {"size": ["1in"], "wall": "0.065in", "family": "A500"},
             "exterior": {"height": "400mm", "width": "500mm", "depth": "400mm"},
         }
@@ -57,7 +57,7 @@ def test_two_dims_threshold():
     spec = BoxSpec.model_validate(
         {
             "name": "flat crate",
-            "vendor": "rfmg",
+            "vendor": "rmfg",
             "material": {"size": ["1in"], "wall": "0.065in", "family": "A500"},
             "exterior": {"height": "790mm", "width": "1250mm", "depth": "400mm"},
             "siding": {

@@ -51,7 +51,7 @@ def run_wizard(spec_path: Path | None, console: Console | None = None) -> None:
     vendor_slug = questionary.select(
         "Vendor:",
         choices=sorted(VENDORS),
-        default=existing.vendor if existing else "rfmg",
+        default=existing.vendor if existing else "rmfg",
     ).unsafe_ask()
     vendor = get_vendor(vendor_slug)
     catalog = vendor.catalog()

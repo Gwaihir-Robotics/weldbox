@@ -11,7 +11,7 @@ WALL = 3.048
 
 def make(clearance=0.25, size=TUBE, wall=WALL, envelope=100.0, family=None):
     spec, env = coupon_spec(
-        "rfmg", size, wall, family,
+        "rmfg", size, wall, family,
         envelope_mm=envelope,
         joints=JointConfig(slot_clearance=clearance),
     )
