@@ -85,6 +85,64 @@ def generate(
 
 
 @app.command()
+def coupon(
+    vendor: str = typer.Option("rfmg", help=f"Vendor: {', '.join(sorted(VENDORS))}"),
+    size: str = typer.Option("1.5in", help="Square tube outer size (e.g. 1.5in, 25.4mm)"),
+    wall: str = typer.Option("0.120in", help="Wall thickness"),
+    family: str = typer.Option(None, help="Material family (A500, 304, 6061 T6, ...)"),
+    envelope: str = typer.Option("100mm", help="Coupon cube size (grown if the tube needs more room)"),
+    slot_clearance: str = typer.Option("0.25mm", help="Slot slip-fit clearance to test"),
+    dogbone: str = typer.Option("1.0mm", help="Dog-bone relief radius"),
+    name: str = typer.Option(None, help="Coupon name (defaults to material-based)"),
+    out: Path = typer.Option(Path("out"), "-o", "--out", help="Output directory"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Print cut list only, no CAD"),
+) -> None:
+    """Generate a small 4-tube tab/slot test assembly (one corner + support).
+
+    Order it before a full build to verify the slip fit, hook-in notches,
+    and dog-bone reliefs on the real material with the real vendor. Rerun
+    with different --slot-clearance values to bracket the fit.
+    """
+    from pydantic import ValidationError
+
+    from .coupon import build_coupon, coupon_spec
+    from .generate import produce_outputs
+    from .spec import JointConfig
+    from .units import parse_length
+
+    try:
+        joints = JointConfig(slot_clearance=slot_clearance, dogbone_radius=dogbone)
+        spec, env = coupon_spec(
+            vendor=vendor,
+            size_mm=parse_length(size),
+            wall_mm=parse_length(wall),
+            family=family,
+            envelope_mm=parse_length(envelope),
+            joints=joints,
+            name=name,
+        )
+        if env > parse_length(envelope):
+            console.print(
+                f"[yellow]note:[/yellow] envelope grown to {env:g}mm so the "
+                "support fits on the rail with a shoulder"
+            )
+        console.print(
+            f"Coupon: {env:g}mm cube, slot clearance {joints.slot_clearance:g}mm, "
+            f"dog-bone r{joints.dogbone_radius:g}mm"
+        )
+        frame = build_coupon(spec, env)
+        produce_outputs(spec, frame, out, dry_run=dry_run, console=console)
+    except ValidationError as exc:
+        console.print(f"[red]error:[/red] invalid coupon options:")
+        for err in exc.errors():
+            console.print(f"  [red]•[/red] {'.'.join(str(p) for p in err['loc'])}: {err['msg']}")
+        raise typer.Exit(1) from None
+    except (ValueError, LookupError, NotImplementedError) as exc:
+        console.print(f"[red]error:[/red] {exc}")
+        raise typer.Exit(1) from None
+
+
+@app.command()
 def wizard(
     spec_path: Path = typer.Argument(None, help="Existing spec YAML to edit"),
 ) -> None:

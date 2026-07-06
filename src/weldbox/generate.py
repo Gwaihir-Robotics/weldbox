@@ -30,10 +30,26 @@ def run_generate(
 ) -> Path:
     console = console or Console()
     spec = load_spec(spec_path)
-    vendor = get_vendor(spec.vendor)
-    catalog = vendor.catalog()
+    frame = resolve_frame(spec, get_vendor(spec.vendor).catalog())
+    return produce_outputs(
+        spec, frame, out_root, dry_run=dry_run, skip_assembly=skip_assembly, console=console
+    )
 
-    frame = resolve_frame(spec, catalog)
+
+def produce_outputs(
+    spec,
+    frame,
+    out_root: Path,
+    *,
+    dry_run: bool = False,
+    skip_assembly: bool = False,
+    console: Console | None = None,
+) -> Path:
+    """Everything downstream of frame resolution: features, consolidation,
+    cut list, files. Used by `generate` and by synthetic frames (`coupon`)."""
+    console = console or Console()
+    vendor = get_vendor(spec.vendor)
+
     hole_map = plan_features(frame, spec)
     if spec.consolidate:
         from .consolidate import consolidate_parts

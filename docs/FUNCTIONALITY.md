@@ -277,7 +277,30 @@ trigger and the $200 flat surcharge — when any part exceeds 100 lb or 60"
 
 ---
 
-## 9. Vendors
+## 9. Test coupons — verify the fit before you commit
+
+```sh
+weldbox coupon --vendor rfmg --size 1.5in --wall 0.120in \
+               --slot-clearance 0.25mm --dogbone 1.0mm -o out
+```
+
+Generates a 4-tube assembly inside a 100mm cube (grown automatically if the
+tube needs more room): a post, two rails butting into it at a corner, and a
+support teed into one rail's midpoint. Between them the four members carry
+every joint feature weldbox cuts — end tabs, closed through-wall slots, the
+open hook-in notches that occur at box corners, and dog-bone reliefs — so
+one small order proves the slip fit on the *real* material with the *real*
+vendor's laser before a full frame is committed.
+
+The output is the standard bundle (part STEPs, assembly STEP, cut list —
+typically 2 unique parts, ~2 lb, well under parcel limits). Rerun with
+different `--slot-clearance` values and distinct `--name`s to bracket the
+fit; whatever clearance welds best goes into your real spec's
+`joints.slot_clearance`.
+
+---
+
+## 10. Vendors
 
 Vendor data lives in `src/weldbox/vendors/data/*.yaml` behind a small
 `Vendor` interface (catalog, design rules, shipping rules, file naming):
@@ -296,7 +319,7 @@ several alloys.
 
 ---
 
-## 10. Validation and errors
+## 11. Validation and errors
 
 - Unknown/typo'd spec fields → error naming the exact path
   (`blocking.1.spanner.cross_members: Extra inputs are not permitted`).
@@ -308,7 +331,7 @@ several alloys.
 
 ---
 
-## 11. Current limitations
+## 12. Current limitations
 
 - Frame math supports **square tube** only (rect/round profiles exist in
   the catalog for future use; round stock is not applicable to this joint

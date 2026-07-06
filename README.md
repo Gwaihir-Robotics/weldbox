@@ -5,7 +5,7 @@ from a YAML spec.
 
 | Enclosure with riveted siding (`full_height_posts`) | Bench frame (`top_bottom_frames`) |
 |---|---|
-| ![Winding machine cell: tube frame with work surface and riveted stainless siding](docs/images/weldbox_sample_1.jpg) | ![Epoxy machine cell: bench frame with solid full-width rails and posts butting up into them](docs/images/weldbox_sample_2.jpg) |
+| ![Winding machine cell: tube frame with work surface and riveted stainless siding](https://raw.githubusercontent.com/Gwaihir-Robotics/weldbox/main/docs/images/weldbox_sample_1.jpg) | ![Epoxy machine cell: bench frame with solid full-width rails and posts butting up into them](https://raw.githubusercontent.com/Gwaihir-Robotics/weldbox/main/docs/images/weldbox_sample_2.jpg) |
 
 Generate laser tube cut lists for welded square-tube boxes and machine
 bases. From a single YAML spec, weldbox produces:
@@ -21,7 +21,7 @@ Frames are self-fixturing: tee joints get through-wall tab-and-slot features
 (slip fit +0.25mm, dog-bone corner reliefs per vendor best practice) so parts
 interlock at 90° for tack welding without jigs.
 
-**[Read the functionality deep dive →](docs/FUNCTIONALITY.md)** — topologies,
+**[Read the functionality deep dive →](https://github.com/Gwaihir-Robotics/weldbox/blob/main/docs/FUNCTIONALITY.md)** — topologies,
 blocking primitives, the tab/slot system, part-count consolidation, siding,
 shipping checks, and the full spec reference.
 
@@ -42,6 +42,26 @@ open out/winding-machine-cell/assembly.step   # opens in FreeCAD
 
 # author a new spec interactively
 uv run weldbox wizard
+
+# order a cheap 4-tube test coupon before committing to a full build:
+# verifies the tab/slot slip fit on your actual material and vendor
+uv run weldbox coupon --size 1.5in --wall 0.120in -o out
+```
+
+## Test coupons
+
+`weldbox coupon` generates a small (100mm cube) 4-tube assembly — a post,
+two rails into it at a corner, and a support teed into a rail — that
+exercises every joint feature weldbox cuts: end tabs, closed through-wall
+slots, the open hook-in corner notches, and dog-bone reliefs. Order one
+from your vendor in your material first, and check the fit-up before
+spending on a full frame. Bracket the slip fit by rerunning with different
+clearances:
+
+```sh
+uv run weldbox coupon --slot-clearance 0.15mm --name coupon-tight  -o out
+uv run weldbox coupon --slot-clearance 0.25mm --name coupon-nominal -o out
+uv run weldbox coupon --slot-clearance 0.40mm --name coupon-loose  -o out
 ```
 
 ## The spec file
@@ -136,7 +156,7 @@ stock STEP files, and assert zero interference at assembled joints.
 
 ## License and attribution
 
-weldbox is released under the [MIT License](LICENSE).
+weldbox is released under the [MIT License](https://github.com/Gwaihir-Robotics/weldbox/blob/main/LICENSE).
 
 The RFMG reference data in `docs/samples/rfmg/` (tube profile
 specifications, stock STEP/DXF geometry, and shipping thresholds) is

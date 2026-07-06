@@ -1,7 +1,25 @@
 [project]
 name = "weldbox"
-version = "0.1.0"
+version = "0.2.0"
 description = "Generate vendor-ready tube laser cut lists (STEP) and sheet panel DXFs for welded square-tube boxes"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mason Hensley" }]
+keywords = [
+    "tube-laser", "laser-cutting", "welding", "fabrication", "cad",
+    "step", "dxf", "build123d", "dfm", "sheet-metal",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Manufacturing",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Environment :: Console",
+]
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "build123d>=0.8",
@@ -12,6 +30,13 @@ dependencies = [
     "questionary>=2.0",
     "rich>=13.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Gwaihir-Robotics/weldbox"
+Repository = "https://github.com/Gwaihir-Robotics/weldbox"
+Documentation = "https://github.com/Gwaihir-Robotics/weldbox/blob/main/docs/FUNCTIONALITY.md"
+Issues = "https://github.com/Gwaihir-Robotics/weldbox/issues"
+Changelog = "https://github.com/Gwaihir-Robotics/weldbox/releases"
 
 [project.scripts]
 weldbox = "weldbox.cli:app"
