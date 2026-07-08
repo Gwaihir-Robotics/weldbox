@@ -12,8 +12,9 @@ bases. From a single YAML spec, weldbox produces:
 
 - **`parts/*.step`** — one STEP file per unique tube part (deduplicated with
   quantities), ready to upload to a tube laser service (RMFG, OshCut, Fabworks)
-- **`panels/*.dxf`** — flat patterns for riveted sheet-metal siding, with
-  rivet holes that match the holes pre-cut in the tubes
+- **`panels/*.dxf`** — flat patterns for riveted sheet-metal siding and deck
+  plates (baseplates/work surfaces, auto-notched around posts and supports),
+  with rivet holes that match the holes pre-cut in the tubes
 - **`assembly.step`** — the full assembly for visual review (open in FreeCAD)
 - **`cutlist.md` / `cutlist.csv`** — the manifest with lengths and quantities
 
@@ -23,7 +24,7 @@ interlock at 90° for tack welding without jigs.
 
 **[Read the functionality deep dive →](https://github.com/Gwaihir-Robotics/weldbox/blob/main/docs/FUNCTIONALITY.md)** — topologies,
 blocking primitives, the tab/slot system, part-count consolidation, siding,
-shipping checks, and the full spec reference.
+deck plates, shipping checks, and the full spec reference.
 
 ## Quick start
 
@@ -90,6 +91,9 @@ siding:
   attachment: {method: rivet, rivet: 0.25in, spacing: 100mm}
   panels:
     - {faces: [left, right, back], material: {alloy: "304", thickness: 0.038"}}
+plates:                   # laser-cut deck plate resting on a layer
+  - layer: base           # base | top | a level's name
+    material: {alloy: "304", thickness: 0.075in}
 quantity: 5
 ```
 
@@ -108,6 +112,14 @@ quantity: 5
   `joints: {corner_tabs: false}`. `joints.weld_gap` shortens butting ends.
 - Sheet panels get a `siding.corner_radius` (default 5mm) applied to the
   DXF outline and the assembly solids; panels carry their rivet holes in 3D.
+- `plates:` adds a deck plate on top of the base, top, or a level: it is
+  auto-notched around every vertical member passing through it (corner
+  notches at posts, edge notches at supports, +`post_clearance`) and shares
+  rivet holes with the top faces of the rails/crosses/spanners beneath it.
+- `feet:` adds caster / leveling-foot plates welded under the bottom frame:
+  4 corners by default, extra mid-span pairs via `mid: {count, axis}` for
+  long units, with a configurable mounting pattern (`square` bolt pattern
+  or a `single` stem hole). See `examples/epoxy_machine_cell.yaml`.
 - Same-size panels consolidate into one flat part (vendors price multiples
   cheaper): a sheet with through-holes can be flipped or rotated 180 in
   plane, so left/right, front/back, and top/bottom pairs share one DXF
@@ -127,8 +139,10 @@ quantity: 5
 
 ## Vendors
 
-`rmfg` is fully encoded (from `docs/samples/rmfg/material_list.md`); `oshcut`
-and `fabtech` are stubs awaiting material lists. Vendor shipping rules
+`rmfg` is fully encoded (from `docs/samples/rmfg/material_list.md`) and
+`oshcut` carries all 93 published square-tube profiles with true corner
+radii (from `docs/samples/oshcut/material_list.md`); `fabtech` is a stub
+awaiting a material list. Vendor shipping rules
 (RMFG's LTL freight thresholds, see `docs/samples/rmfg/shipping.md`) drive
 an order-level estimate: the generator weighs the cut list analytically and
 warns — in the console and on `cutlist.md` — when a part dimension or the

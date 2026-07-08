@@ -32,6 +32,13 @@ blocking:
     face: bottom
     axis: width
     position: 0.5
+# laser-cut baseplate resting on the base frame: corner notches around the
+# posts, edge notches around the base->work-surface supports, rivet holes
+# into the base rails and bottom spanner
+plates:
+  - layer: base
+    material: {alloy: "304", thickness: 0.075in}
+    post_clearance: 1mm
 siding:
   attachment:
     method: rivet

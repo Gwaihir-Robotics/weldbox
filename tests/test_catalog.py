@@ -46,8 +46,24 @@ def test_missing_profile_raises(rmfg):
 
 
 def test_stub_vendors_empty():
-    assert get_vendor("oshcut").catalog().profiles == []
     assert get_vendor("fabtech").catalog().profiles == []
+
+
+def test_oshcut_catalog():
+    """Encoded from app.oshcut.com/catalog/tube (api/materials, 2026-07-06):
+    93 square profiles over 5 material families."""
+    cat = get_vendor("oshcut").catalog()
+    assert len(cat.profiles) == 93
+    assert {p.material_family for p in cat.profiles} == {
+        "A513", "A500 Cold Formed", "304", "6061 T6", "6063 T52",
+    }
+    p = cat.find("square", 38.1, 38.1, 0.065 * 25.4, material_family="A513")
+    assert p.id == "oshcut-a513-s15x065"
+    assert p.corner_r_mm == pytest.approx(0.13 * 25.4)
+    # extruded aluminum has published SHARP corners (r=0), no 2 x wall fallback
+    al = cat.find("square", 38.1, 38.1, 0.062 * 25.4, material_family="6061")
+    assert al.corner_r_mm == 0.0
+    assert al.corner_r_resolved_mm == 0.0
 
 
 def test_unknown_vendor():

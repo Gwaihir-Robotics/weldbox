@@ -39,6 +39,8 @@ ROLE_COLORS: dict[str, tuple[float, float, float]] = {
     "spanner": (0.55, 0.35, 0.65),   # purple
 }
 PANEL_COLOR = (0.75, 0.78, 0.82, 0.45)  # translucent sheet
+PLATE_COLOR = (0.80, 0.68, 0.35, 0.85)  # deck plates: brass, mostly opaque
+FOOT_COLOR = (0.30, 0.32, 0.38, 1.0)    # welded foot plates: dark steel
 
 
 def member_location(member: Member) -> Location:
@@ -163,6 +165,19 @@ def panel_solid(panel: PanelLayout) -> Part:
         RectangleRounded(w, h, r) if r > 0 else Rectangle(w, h)
     )
     sketch = Pos(w / 2, h / 2) * sheet
+    for c in panel.cutouts:
+        # extend sides that lie on the outline past it, so notch cutters
+        # clear the edge; the cutter's rounded corners land outside the sheet
+        # there, leaving a straight edge cut that matches the DXF outline
+        ext = c.radius + 2.0
+        u0 = c.u0 - ext if c.u0 <= 1e-6 else c.u0
+        v0 = c.v0 - ext if c.v0 <= 1e-6 else c.v0
+        u1 = c.u1 + ext if c.u1 >= w - 1e-6 else c.u1
+        v1 = c.v1 + ext if c.v1 >= h - 1e-6 else c.v1
+        cw, ch = u1 - u0, v1 - v0
+        rn = min(c.radius, cw / 2 - 0.01, ch / 2 - 0.01)
+        cutter = RectangleRounded(cw, ch, rn) if rn > 0.01 else Rectangle(cw, ch)
+        sketch -= Pos((u0 + u1) / 2, (v0 + v1) / 2) * cutter
     for u, v, dia in panel.holes:
         sketch -= Pos(u, v) * Circle(dia / 2)
 
@@ -172,6 +187,13 @@ def panel_solid(panel: PanelLayout) -> Part:
     solid = extrude(plane * sketch, amount=outward * panel.thickness)
 
     solid = Part(solid)
-    solid.label = f"panel-{panel.name}"
-    solid.color = Color(*PANEL_COLOR)
+    if panel.face == "foot":
+        solid.label = panel.name
+        solid.color = Color(*FOOT_COLOR)
+    elif panel.face.startswith("plate:"):
+        solid.label = panel.name
+        solid.color = Color(*PLATE_COLOR)
+    else:
+        solid.label = f"panel-{panel.name}"
+        solid.color = Color(*PANEL_COLOR)
     return solid

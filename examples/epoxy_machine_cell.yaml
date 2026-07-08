@@ -22,4 +22,12 @@ blocking:
     face: [top, bottom]
     axis: depth
     count: 3
+# caster plates welded under the bottom frame: 4 corners + a mid pair on the
+# 2000mm span (6 casters), each with a 3in-square 3/8in bolt pattern.
+# For stem casters / self-leveling feet use pattern: {type: single, hole: 0.5in}.
+feet:
+  material: {alloy: "A36", thickness: 0.25in}
+  size: 4in
+  pattern: {type: square, spacing: 3in, hole: 0.41in}
+  mid: {count: 1, axis: width}
 quantity: 5

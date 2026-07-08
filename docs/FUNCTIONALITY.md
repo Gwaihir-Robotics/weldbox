@@ -43,7 +43,7 @@ quietly change your build.
 
 ```yaml
 name: Epoxy Machine Cell        # used for output folder and file names
-vendor: rmfg                    # rmfg | oshcut | fabtech (stubs)
+vendor: rmfg                    # rmfg | oshcut | fabtech (stub)
 material:                       # catalog lookup key, not free-form:
   shape: square                 #   must match a profile the vendor stocks
   size: [1.5in]                 #   [w] or [w, h]
@@ -63,8 +63,10 @@ joints:                         # all optional; defaults shown
   corner_tabs: true             #   tab/slot at box corners too
 blocking: [...]                 # see section 4
 siding: {...}                   # see section 5
+plates: [...]                   # see section 6
+feet: {...}                     # see section 6 (caster/leveling-foot plates)
 quantity: 5                     # assemblies; multiplies the cut list
-consolidate: true               # see section 6
+consolidate: true               # see section 7
 ```
 
 `material` must resolve to a real vendor profile — weldbox models the
@@ -183,7 +185,89 @@ What you get:
 
 ---
 
-## 6. Part-count consolidation
+## 6. Deck plates and foot plates
+
+A `plates:` entry adds a laser-cut sheet that rests **on top of** a
+horizontal layer — the base frame, the top frame, or any named blocking
+level:
+
+```yaml
+plates:
+  - layer: base                 # base | top | a level's name | level@<height>
+    material: {alloy: "304", thickness: 0.075in}
+    margin: 0mm                 # inset from the frame exterior on all edges
+    post_clearance: 1mm         # gap around every cutout
+    corner_radius: 5mm          # outer sheet corners
+    attachment: {rivet: 1/4in, spacing: 100mm}   # same options as siding
+```
+
+(The key is `layer`, not `on` — bare `on` is a boolean in YAML.)
+
+What you get:
+
+- **Cutouts around everything that passes through the sheet.** Any vertical
+  member crossing the plate's thickness is notched out: corner posts become
+  open corner notches, perimeter supports become edge notches, and a
+  mid-plate vertical would become a rounded interior hole. Each cutout is
+  the tube footprint plus `post_clearance`, with a concave relief radius
+  matching the tube's outside corner radius, so the plate drops straight in
+  around the welded frame.
+- **Rivet holes shared with the tubes.** Every member whose top face is
+  coplanar with the plate underside — the layer's rails, cross members, and
+  spanners — gets a hole row on its top wall, and the plate gets the
+  matching holes. A hole that would land inside (or within 2mm web of) a
+  cutout is skipped on both sides, so tube and sheet can never disagree.
+- The plate ships as a DXF like any panel, joins panel consolidation (two
+  plates merge only when their cutout patterns coincide exactly under a
+  flip — cutouts are structural and are never unioned), is counted in the
+  shipping estimate, and appears in the assembly STEP as a brass-colored
+  solid so it reads distinctly from the translucent siding.
+
+The winding machine cell example carries a `layer: base` plate: its DXF has
+four post corner notches, four support edge notches, and 37 rivet holes
+into the base rails and the bottom spanner.
+
+### Caster & leveling-foot plates (`feet:`)
+
+`feet:` adds square plates welded to the **underside** of the bottom frame,
+flush with the box exterior, carrying the mounting pattern for casters or
+self-leveling feet (the caster itself is not modeled — just the plate):
+
+```yaml
+feet:
+  material: {alloy: "A36", thickness: 0.25in}
+  size: 4in                     # square plate side
+  corner_radius: 5mm
+  pattern:
+    type: square                # square | single
+    spacing: 3in                # hole center-to-center (square pattern)
+    hole: 0.41in                # 3/8in bolt clearance
+    center_hole: 0.5in          # extra stem/leveling-foot hole; 0 to omit
+  corners: true                 # default: one plate per corner
+  mid: {count: 1, axis: width}  # extra pairs for long spans (see below)
+```
+
+- **Placement.** `corners: true` (default) puts one plate in each corner.
+  For long units, `mid` adds `count` evenly spaced positions along `axis`,
+  with a plate on *each* of the two edges parallel to that axis — the epoxy
+  cell's `mid: {count: 1, axis: width}` yields 6 casters on its 2000mm span.
+- **Hole pattern**, centered on each plate: `square` cuts 4 holes at
+  `spacing` center-to-center (bolt-on caster / machine mount) *plus* a
+  centered `center_hole` (0.5in default) so the same plate also accepts a
+  threaded-stem caster or leveling foot — set `center_hole: 0` to omit it.
+  `single` cuts just the one center hole
+  (`pattern: {type: single, hole: 0.5in}`).
+- The plates are **welded gussets** — no holes are cut into the tubes. All
+  plates are identical, so they consolidate into a single flat part
+  (`foot.dxf`, qty N), join the shipping estimate, and show up in the
+  assembly STEP as dark steel plates hanging `thickness` below z=0.
+- Errors are validated up front: a `spacing`/`hole` combination that does
+  not fit the plate, corner plates that would overlap on a small footprint,
+  and `corners: false` with no `mid` all fail with a clear message.
+
+---
+
+## 7. Part-count consolidation
 
 Vendors price multiples of the same part dramatically cheaper, so weldbox
 works hard to minimize unique part numbers (`consolidate: true`, the
@@ -214,7 +298,7 @@ faces — only exactly-identical parts merge then.
 
 ---
 
-## 7. The tab/slot system (jigless welding)
+## 8. The tab/slot system (jigless welding)
 
 Every joint self-locates for tack welding — no jigs, clamps, or layout:
 
@@ -239,7 +323,7 @@ slot void.
 
 ---
 
-## 8. Outputs
+## 9. Outputs
 
 ```
 out/<name>/
@@ -277,7 +361,7 @@ trigger and the $200 flat surcharge — when any part exceeds 100 lb or 60"
 
 ---
 
-## 9. Test coupons — verify the fit before you commit
+## 10. Test coupons — verify the fit before you commit
 
 ```sh
 weldbox coupon --vendor rmfg --size 1.5in --wall 0.120in \
@@ -300,7 +384,7 @@ fit; whatever clearance welds best goes into your real spec's
 
 ---
 
-## 10. Vendors
+## 11. Vendors
 
 Vendor data lives in `src/weldbox/vendors/data/*.yaml` behind a small
 `Vendor` interface (catalog, design rules, shipping rules, file naming):
@@ -309,7 +393,13 @@ Vendor data lives in `src/weldbox/vendors/data/*.yaml` behind a small
   stainless, 6061/6063 aluminum) with published corner radii, design notes,
   and LTL freight thresholds. Source:
   <https://www.rmfg.com/docs/services/laser-tube-cutting>
-- **oshcut**, **fabtech** — registered stubs awaiting material lists.
+- **oshcut** — 93 square-tube profiles (A513, A500, 304 ornamental,
+  6061 T6, 6063 T52) encoded from the public catalog API with published
+  corner radii (extruded aluminum is a true sharp corner, r=0) and the
+  235in max part length. Source: <https://app.oshcut.com/catalog/tube>
+  (reference DXFs under `docs/samples/oshcut/`). Shipping rules not yet
+  encoded.
+- **fabtech** — registered stub awaiting a material list.
 
 To add a vendor: drop a `data/<slug>.yaml` (dimensions in inches as
 published; omit corner radius where unpublished and weldbox assumes
@@ -319,7 +409,7 @@ several alloys.
 
 ---
 
-## 11. Validation and errors
+## 12. Validation and errors
 
 - Unknown/typo'd spec fields → error naming the exact path
   (`blocking.1.spanner.cross_members: Extra inputs are not permitted`).
@@ -331,7 +421,7 @@ several alloys.
 
 ---
 
-## 12. Current limitations
+## 13. Current limitations
 
 - Frame math supports **square tube** only (rect/round profiles exist in
   the catalog for future use; round stock is not applicable to this joint
@@ -342,5 +432,5 @@ several alloys.
   (e.g. a spanner through a support); member-vs-member placement collision
   checking is on the roadmap — the bounding-box overlap tests catch this in
   the standard layouts.
-- `oshcut`/`fabtech` catalogs are empty until their material lists are
-  transcribed.
+- The `fabtech` catalog is empty until its material list is transcribed;
+  `oshcut` covers square tube only (weldbox frames are square-only).

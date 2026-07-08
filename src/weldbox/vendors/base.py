@@ -80,6 +80,9 @@ class Rmfg(Vendor):
 class Oshcut(Vendor):
     slug = "oshcut"
     display_name = "OshCut"
+    # 235in max length from the tube catalog (app.oshcut.com/catalog/tube);
+    # hole/slot minimums not published, conservative defaults kept
+    rules = DesignRules(max_part_length_mm=235 * 25.4)
 
 
 class Fabtech(Vendor):

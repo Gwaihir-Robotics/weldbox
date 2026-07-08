@@ -1,2 +1,99 @@
-# OshCut tube profiles — not yet encoded (docs/samples/oshcut/material_list.md is a todo).
-profiles: []
+# OshCut square tube profiles, from https://app.oshcut.com/catalog/tube
+# (public api/materials endpoint, extracted 2026-07-06). Dimensions in
+# inches as published. corner_r_in is OshCut's nominal corner radius;
+# 0 means a sharp corner (extruded aluminum).
+# Reference DXFs: docs/samples/oshcut/material_list.md
+profiles:
+  - {id: oshcut-304-s75x065, name: "0.75 x 0.75 x .065 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 0.75, wall_in: 0.065, corner_r_in: 0.13, family: "304"}
+  - {id: oshcut-304-s1x065, name: "1 x 1 x .065 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1, wall_in: 0.065, corner_r_in: 0.13, family: "304"}
+  - {id: oshcut-304-s1x12, name: "1 x 1 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s125x065, name: "1.25 x 1.25 x .065 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1.25, wall_in: 0.065, corner_r_in: 0.13, family: "304"}
+  - {id: oshcut-304-s125x12, name: "1.25 x 1.25 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1.25, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s15x065, name: "1.5 x 1.5 x .065 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1.5, wall_in: 0.065, corner_r_in: 0.13, family: "304"}
+  - {id: oshcut-304-s15x12, name: "1.5 x 1.5 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1.5, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s15x18, name: "1.5 x 1.5 x .18 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 1.5, wall_in: 0.18, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-304-s2x065, name: "2 x 2 x .065 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2, wall_in: 0.065, corner_r_in: 0.13, family: "304"}
+  - {id: oshcut-304-s2x083, name: "2 x 2 x .083 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2, wall_in: 0.083, corner_r_in: 0.1875, family: "304"}
+  - {id: oshcut-304-s2x12, name: "2 x 2 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s2x18, name: "2 x 2 x .18 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2, wall_in: 0.18, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-304-s2x25, name: "2 x 2 x .25 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2, wall_in: 0.25, corner_r_in: 0.5, family: "304"}
+  - {id: oshcut-304-s25x12, name: "2.5 x 2.5 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2.5, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s25x18, name: "2.5 x 2.5 x .18 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2.5, wall_in: 0.18, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-304-s25x25, name: "2.5 x 2.5 x .25 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 2.5, wall_in: 0.25, corner_r_in: 0.5, family: "304"}
+  - {id: oshcut-304-s3x12, name: "3 x 3 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 3, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s3x18, name: "3 x 3 x .18 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 3, wall_in: 0.18, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-304-s3x25, name: "3 x 3 x .25 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 3, wall_in: 0.25, corner_r_in: 0.5, family: "304"}
+  - {id: oshcut-304-s4x12, name: "4 x 4 x .12 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 4, wall_in: 0.12, corner_r_in: 0.24, family: "304"}
+  - {id: oshcut-304-s4x18, name: "4 x 4 x .18 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 4, wall_in: 0.18, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-304-s4x25, name: "4 x 4 x .25 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 4, wall_in: 0.25, corner_r_in: 0.5, family: "304"}
+  - {id: oshcut-304-s6x188, name: "6 x 6 x .188 in Square Tube (304 Stainless Steel, ornamental)", shape: square, outer_in: 6, wall_in: 0.188, corner_r_in: 0.36, family: "304"}
+  - {id: oshcut-6061t6-s1x125, name: "1 x 1 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 1, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s125x125, name: "1.25 x 1.25 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 1.25, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s15x062, name: "1.5 x 1.5 x .062 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 1.5, wall_in: 0.062, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s15x125, name: "1.5 x 1.5 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 1.5, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s2x125, name: "2 x 2 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 2, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s2x188, name: "2 x 2 x .188 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 2, wall_in: 0.188, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s2x25, name: "2 x 2 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 2, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s25x188, name: "2.5 x 2.5 x .188 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 2.5, wall_in: 0.188, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s25x25, name: "2.5 x 2.5 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 2.5, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s3x125, name: "3 x 3 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 3, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s3x188, name: "3 x 3 x .188 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 3, wall_in: 0.188, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s3x25, name: "3 x 3 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 3, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s35x125, name: "3.5 x 3.5 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 3.5, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s4x125, name: "4 x 4 x .125 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 4, wall_in: 0.125, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s4x188, name: "4 x 4 x .188 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 4, wall_in: 0.188, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s4x25, name: "4 x 4 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 4, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s5x25, name: "5 x 5 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 5, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s6x188, name: "6 x 6 x .188 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 6, wall_in: 0.188, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6061t6-s6x25, name: "6 x 6 x .25 in Square Tube (6061 T6 Aluminum)", shape: square, outer_in: 6, wall_in: 0.25, corner_r_in: 0, family: "6061 T6"}
+  - {id: oshcut-6063t52-s75x062, name: "0.75 x 0.75 x .062 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 0.75, wall_in: 0.062, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s75x125, name: "0.75 x 0.75 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 0.75, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s1x062, name: "1 x 1 x .062 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 1, wall_in: 0.062, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s15x125, name: "1.5 x 1.5 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 1.5, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s175x125, name: "1.75 x 1.75 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 1.75, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s2x125, name: "2 x 2 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 2, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s25x125, name: "2.5 x 2.5 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 2.5, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s3x125, name: "3 x 3 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 3, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s4x125, name: "4 x 4 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 4, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s5x125, name: "5 x 5 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 5, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s5x25, name: "5 x 5 x .25 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 5, wall_in: 0.25, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-6063t52-s6x125, name: "6 x 6 x .125 in Square Tube (6063 T52 Aluminum)", shape: square, outer_in: 6, wall_in: 0.125, corner_r_in: 0, family: "6063 T52"}
+  - {id: oshcut-a500-s15x188, name: "1.5 x 1.5 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 1.5, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s15x25, name: "1.5 x 1.5 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 1.5, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s2x12, name: "2 x 2 x .12 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2, wall_in: 0.12, corner_r_in: 0.24, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s2x188, name: "2 x 2 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s2x25, name: "2 x 2 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s25x12, name: "2.5 x 2.5 x .12 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2.5, wall_in: 0.12, corner_r_in: 0.24, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s25x188, name: "2.5 x 2.5 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2.5, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s25x238, name: "2.5 x 2.5 x .238 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2.5, wall_in: 0.238, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s25x25, name: "2.5 x 2.5 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 2.5, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s3x12, name: "3 x 3 x .12 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 3, wall_in: 0.12, corner_r_in: 0.24, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s3x188, name: "3 x 3 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 3, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s3x25, name: "3 x 3 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 3, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s35x188, name: "3.5 x 3.5 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 3.5, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s35x25, name: "3.5 x 3.5 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 3.5, wall_in: 0.25, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s4x12, name: "4 x 4 x .12 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 4, wall_in: 0.12, corner_r_in: 0.24, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s4x188, name: "4 x 4 x .188 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 4, wall_in: 0.188, corner_r_in: 0.376, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s4x25, name: "4 x 4 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 4, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s5x125, name: "5 x 5 x .125 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 5, wall_in: 0.125, corner_r_in: 0.25, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s5x25, name: "5 x 5 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 5, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s6x12, name: "6 x 6 x .12 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 6, wall_in: 0.12, corner_r_in: 0.24, family: "A500 Cold Formed"}
+  - {id: oshcut-a500-s6x25, name: "6 x 6 x .25 in Square Tube (A500 Cold-Formed Carbon Steel)", shape: square, outer_in: 6, wall_in: 0.25, corner_r_in: 0.5, family: "A500 Cold Formed"}
+  - {id: oshcut-a513-s75x065, name: "0.75 x 0.75 x .065 in Square Tube (A513 Steel)", shape: square, outer_in: 0.75, wall_in: 0.065, corner_r_in: 0.13, family: "A513"}
+  - {id: oshcut-a513-s75x083, name: "0.75 x 0.75 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 0.75, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s1x049, name: "1 x 1 x .049 in Square Tube (A513 Steel)", shape: square, outer_in: 1, wall_in: 0.049, corner_r_in: 0.098, family: "A513"}
+  - {id: oshcut-a513-s1x065, name: "1 x 1 x .065 in Square Tube (A513 Steel)", shape: square, outer_in: 1, wall_in: 0.065, corner_r_in: 0.13, family: "A513"}
+  - {id: oshcut-a513-s1x083, name: "1 x 1 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 1, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s1x12, name: "1 x 1 x .12 in Square Tube (A513 Steel)", shape: square, outer_in: 1, wall_in: 0.12, corner_r_in: 0.24, family: "A513"}
+  - {id: oshcut-a513-s125x065, name: "1.25 x 1.25 x .065 in Square Tube (A513 Steel)", shape: square, outer_in: 1.25, wall_in: 0.065, corner_r_in: 0.13, family: "A513"}
+  - {id: oshcut-a513-s125x083, name: "1.25 x 1.25 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 1.25, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s125x12, name: "1.25 x 1.25 x .12 in Square Tube (A513 Steel)", shape: square, outer_in: 1.25, wall_in: 0.12, corner_r_in: 0.24, family: "A513"}
+  - {id: oshcut-a513-s15x049, name: "1.5 x 1.5 x .049 in Square Tube (A513 Steel)", shape: square, outer_in: 1.5, wall_in: 0.049, corner_r_in: 0.098, family: "A513"}
+  - {id: oshcut-a513-s15x065, name: "1.5 x 1.5 x .065 in Square Tube (A513 Steel)", shape: square, outer_in: 1.5, wall_in: 0.065, corner_r_in: 0.13, family: "A513"}
+  - {id: oshcut-a513-s15x083, name: "1.5 x 1.5 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 1.5, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s15x12, name: "1.5 x 1.5 x .12 in Square Tube (A513 Steel)", shape: square, outer_in: 1.5, wall_in: 0.12, corner_r_in: 0.24, family: "A513"}
+  - {id: oshcut-a513-s175x083, name: "1.75 x 1.75 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 1.75, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s2x065, name: "2 x 2 x .065 in Square Tube (A513 Steel)", shape: square, outer_in: 2, wall_in: 0.065, corner_r_in: 0.13, family: "A513"}
+  - {id: oshcut-a513-s2x083, name: "2 x 2 x .083 in Square Tube (A513 Steel)", shape: square, outer_in: 2, wall_in: 0.083, corner_r_in: 0.166, family: "A513"}
+  - {id: oshcut-a513-s5x188, name: "5 x 5 x .188 in Square Tube (A513 Steel)", shape: square, outer_in: 5, wall_in: 0.188, corner_r_in: 0.376, family: "A513"}
+  - {id: oshcut-a513-s6x12, name: "6 x 6 x .12 in Square Tube (A513 Steel)", shape: square, outer_in: 6, wall_in: 0.12, corner_r_in: 0.24, family: "A513"}

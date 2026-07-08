@@ -132,6 +132,56 @@ class SidingSpec(SpecModel):
     corner_radius: LengthMM = 5.0  # sheet corner radius
 
 
+class PlateSpec(SpecModel):
+    """Laser-cut sheet plate resting on top of a horizontal layer (base, top,
+    or a named level). The plate gets cutouts around any vertical member that
+    passes through it (corner posts, supports) and rivet holes into the top
+    faces of the members it rests on (rails, cross members, spanners)."""
+
+    # layer name: base, top, a level's name, or level@<height>. Named
+    # `layer` (not `on`) because bare `on` is a YAML 1.1 boolean.
+    layer: str = "base"
+    material: SheetMaterialSpec
+    margin: LengthMM = 0.0  # inset from the frame exterior on all edges
+    post_clearance: LengthMM = 1.0  # gap around each cutout member
+    corner_radius: LengthMM = 5.0  # outer sheet corner radius
+    attachment: AttachmentSpec = AttachmentSpec()
+
+
+class FootPattern(SpecModel):
+    """Mounting hole pattern cut into each foot plate, centered on the
+    plate: `square` is 4 holes at `spacing` center-to-center (bolt-on caster
+    or machine mount), `single` is one center hole (threaded-stem caster or
+    self-leveling foot). The square pattern also gets a `center_hole` by
+    default so the same plate accepts either mount; set it to 0 to omit."""
+
+    type: Literal["square", "single"] = "square"
+    spacing: LengthMM = 76.2  # 3in c-to-c; ignored for single
+    hole: LengthMM = 10.4  # 0.41in — 3/8in bolt clearance
+    center_hole: LengthMM = 12.7  # 0.5in stem/leveling-foot hole; 0 disables
+
+
+class MidFeet(SpecModel):
+    """Extra foot plates for long spans: `count` positions evenly spaced
+    along `axis` (k / (count + 1)), one plate on each of the two edges
+    parallel to that axis."""
+
+    count: int = Field(gt=0)
+    axis: Literal["width", "depth"] = "width"
+
+
+class FeetSpec(SpecModel):
+    """Caster / leveling-foot plates welded to the underside of the bottom
+    frame, flush with the box exterior. Default: one per corner."""
+
+    material: SheetMaterialSpec
+    size: LengthMM = 101.6  # square plate side, 4in
+    corner_radius: LengthMM = 5.0
+    pattern: FootPattern = FootPattern()
+    corners: bool = True
+    mid: MidFeet | None = None
+
+
 class BoxSpec(SpecModel):
     name: str
     vendor: str = "rmfg"
@@ -141,6 +191,8 @@ class BoxSpec(SpecModel):
     joints: JointConfig = JointConfig()
     blocking: list[BlockingItem] = []
     siding: SidingSpec | None = None
+    plates: list[PlateSpec] = []
+    feet: FeetSpec | None = None
     quantity: int = Field(default=1, ge=1)
     # add sacrificial slots/holes so same-length members collapse into one
     # part number (fewer unique parts to order); disable for cosmetic faces

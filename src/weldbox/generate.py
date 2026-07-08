@@ -51,6 +51,18 @@ def produce_outputs(
     vendor = get_vendor(spec.vendor)
 
     hole_map = plan_features(frame, spec)
+
+    plate_panels: list = []
+    if getattr(spec, "plates", None):
+        from .panels.plates import plan_plates
+
+        # before consolidation: plate rivet holes live on the tubes too
+        plate_panels = plan_plates(frame, spec)
+    if getattr(spec, "feet", None):
+        from .panels.feet import plan_feet
+
+        plate_panels += plan_feet(spec)
+
     if spec.consolidate:
         from .consolidate import consolidate_parts
 
@@ -66,9 +78,13 @@ def produce_outputs(
     panels: list = []
     unique_panels: list = []
     if spec.siding and spec.siding.panels:
-        from .panels.layout import consolidate_panels, panel_layouts
+        from .panels.layout import panel_layouts
 
         panels = panel_layouts(frame, spec, hole_map)
+    panels += plate_panels
+    if panels:
+        from .panels.layout import consolidate_panels
+
         unique_panels = consolidate_panels(panels, enabled=spec.consolidate)
 
     from .shipping import estimate_shipping

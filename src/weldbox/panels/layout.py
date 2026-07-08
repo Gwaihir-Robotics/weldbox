@@ -22,6 +22,23 @@ from ..spec import BoxSpec
 Vec3 = tuple[float, float, float]
 
 
+@dataclass(frozen=True)
+class Cutout:
+    """Rectangular cutout in panel coordinates (material removed), clipped to
+    the panel outline. A side lying on the outline (u0 <= 0, v0 <= 0,
+    u1 >= width, v1 >= height) makes the cutout an open corner/edge notch;
+    `radius` is the concave inside-corner relief radius."""
+
+    u0: float
+    v0: float
+    u1: float
+    v1: float
+    radius: float
+
+    def key(self, decimals: int = 2) -> tuple:
+        return tuple(round(v, decimals) for v in (self.u0, self.v0, self.u1, self.v1, self.radius))
+
+
 @dataclass
 class Panel:
     name: str
@@ -33,6 +50,7 @@ class Panel:
     qty: int
     corner_radius: float = 0.0
     holes: list[tuple[float, float, float]] = field(default_factory=list)  # (u, v, dia)
+    cutouts: list[Cutout] = field(default_factory=list)  # plate notches/holes
     # 3D placement (frame exterior corner of the panel, before margin)
     origin3d: Vec3 = (0.0, 0.0, 0.0)
     u_dir: Vec3 = (1.0, 0.0, 0.0)
@@ -80,16 +98,33 @@ def consolidate_panels(panels: list[Panel], enabled: bool = True) -> list[Panel]
 
     Returns unique panels (qty summed); the input panels' hole lists are
     updated in place so the assembly solids show the real cut pattern.
+
+    Cutouts (plate notches) are structural, so they are never unioned: two
+    plates only merge under a transform that maps one's cutouts exactly onto
+    the other's.
     """
-    groups: dict[tuple, list[Panel]] = {}
-    for p in panels:
-        key = (
-            round(p.width, 2), round(p.height, 2), round(p.thickness, 3),
-            p.material, round(p.corner_radius, 2),
-        )
-        groups.setdefault(key, []).append(p)
+
+    def cutout_set(cutouts, w, h, mu, mv):
+        out = set()
+        for c in cutouts:
+            u0, u1 = (w - c.u1, w - c.u0) if mu else (c.u0, c.u1)
+            v0, v1 = (h - c.v1, h - c.v0) if mv else (c.v0, c.v1)
+            out.add(tuple(round(x, 2) for x in (u0, v0, u1, v1, c.radius)))
+        return out
 
     transforms = [(False, False), (True, False), (False, True), (True, True)]
+
+    groups: dict[tuple, list[Panel]] = {}
+    for p in panels:
+        canonical = min(
+            tuple(sorted(cutout_set(p.cutouts, p.width, p.height, mu, mv)))
+            for mu, mv in transforms
+        )
+        key = (
+            round(p.width, 2), round(p.height, 2), round(p.thickness, 3),
+            p.material, round(p.corner_radius, 2), canonical,
+        )
+        groups.setdefault(key, []).append(p)
 
     def apply(holes, w, h, mu, mv):
         return {
@@ -102,11 +137,14 @@ def consolidate_panels(panels: list[Panel], enabled: bool = True) -> list[Panel]
         group = sorted(group, key=lambda p: len(p.holes), reverse=True)
         ref = group[0]
         w, h = ref.width, ref.height
+        ref_cutouts = cutout_set(ref.cutouts, w, h, False, False)
         part_holes = apply(ref.holes, w, h, False, False)
         placements = [(ref, False, False)]
         for p in group[1:]:
             best = None
             for mu, mv in transforms:
+                if cutout_set(p.cutouts, w, h, mu, mv) != ref_cutouts:
+                    continue  # cutouts must coincide exactly
                 mapped = apply(p.holes, w, h, mu, mv)
                 union = part_holes | mapped
                 if not enabled and len(union) > max(len(part_holes), len(mapped)):
@@ -124,7 +162,16 @@ def consolidate_panels(panels: list[Panel], enabled: bool = True) -> list[Panel]
         for p, mu, mv in placements:  # transforms are involutions
             p.holes = sorted(apply(part_holes, w, h, mu, mv))
         ref.qty = len(placements)
-        ref.name = "-".join(p.name for p, _, _ in placements)
+        names = [p.name for p, _, _ in placements]
+        # numbered twins ("foot-1".."foot-6") collapse to their stem
+        stems = {n.rsplit("-", 1)[0] for n in names
+                 if "-" in n and n.rsplit("-", 1)[1].isdigit()}
+        if len(names) > 1 and len(stems) == 1 and all(
+            "-" in n and n.rsplit("-", 1)[1].isdigit() for n in names
+        ):
+            ref.name = stems.pop()
+        else:
+            ref.name = "-".join(names)
         unique.append(ref)
     return sorted(unique, key=lambda p: p.name)
 
