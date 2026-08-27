@@ -30,7 +30,9 @@ open out/my-box/assembly.step                      # 5. review in FreeCAD
 ```
 
 The YAML spec is the source of truth. The wizard is only a convenience that
-writes one; you can always edit the file directly and regenerate.
+writes one; you can always edit the file directly and regenerate. It prompts
+for everything the schema supports — topology, blocking, siding, deck plates,
+and caster/foot plates.
 
 ---
 
@@ -220,8 +222,8 @@ What you get:
 - The plate ships as a DXF like any panel, joins panel consolidation (two
   plates merge only when their cutout patterns coincide exactly under a
   flip — cutouts are structural and are never unioned), is counted in the
-  shipping estimate, and appears in the assembly STEP as a brass-colored
-  solid so it reads distinctly from the translucent siding.
+  shipping estimate, and appears in the assembly STEP as its own opaque
+  BOM color (see section 9), distinct from the translucent siding.
 
 The winding machine cell example carries a `layer: base` plate: its DXF has
 four post corner notches, four support edge notches, and 37 rivet holes
@@ -341,11 +343,15 @@ out/<name>/
   published geometry — the generated 1.5×1.5×0.120 profile matches RMFG's
   own reference STEP within 0.5%.
 - **The assembly STEP** contains one *named product per member and panel*
-  (`post-fl`, `work-surface-cross-2`, `panel-back`, …), colored by role —
-  posts slate, rails gray, level rails teal, crosses orange, supports
-  green, spanners purple, panels translucent — with colors on every face,
-  so FreeCAD shows an inspectable, hideable, colored model regardless of
-  its STEP import preferences.
+  (`post-fl`, `work-surface-cross-2`, `panel-back`, …), **colored by the
+  bill of materials**: members that consolidate into the same unique part —
+  the same STEP file — share a color, and each distinct part gets its own,
+  so the model is a visual key to the cut list. Interchangeable members
+  (e.g. posts and supports that turn out to be one part) read the same
+  color. Sheet parts each get a distinct color too, with siding kept
+  translucent so the frame shows through. Colors are on every face, so
+  FreeCAD shows an inspectable, hideable, colored model regardless of its
+  STEP import preferences.
 - **The cut list** shows per-part length (mm and inches), quantity per
   assembly, and total quantity across the order, plus total stock meters.
 

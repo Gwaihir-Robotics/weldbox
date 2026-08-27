@@ -15,9 +15,13 @@ from .spec import (
     BoxSpec,
     CrossMembers,
     Exterior,
+    FeetSpec,
+    FootPattern,
     LevelSpec,
     MaterialRef,
+    MidFeet,
     PanelSpec,
+    PlateSpec,
     SheetMaterialSpec,
     SidingSpec,
     SpannerSpec,
@@ -36,6 +40,79 @@ def _ask_length(message: str, default: str = "") -> float:
             return parse_length(raw)
         except ValueError as exc:
             print(f"  {exc}")
+
+
+def _ask_plates(level_names: list[str], default_on: bool) -> list[PlateSpec]:
+    """Deck plates: a laser-cut sheet resting on top of a layer, notched
+    around the members that pass through it."""
+    plates: list[PlateSpec] = []
+    layer_choices = ["base", "top", *level_names]
+    while questionary.confirm(
+        "Add a deck plate (baseplate / work surface) resting on a layer?",
+        default=default_on if not plates else False,
+    ).unsafe_ask():
+        layer = questionary.select("Rest the plate on which layer?", choices=layer_choices).unsafe_ask()
+        thickness = _ask_length("Plate thickness", '0.075in')
+        alloy = questionary.text("Plate alloy:", default="304").unsafe_ask()
+        clearance = _ask_length("Clearance around posts/supports", "1mm")
+        plates.append(
+            PlateSpec(
+                layer=layer,
+                material=SheetMaterialSpec(alloy=alloy, thickness=thickness),
+                post_clearance=clearance,
+            )
+        )
+    return plates
+
+
+def _ask_feet(default_on: bool) -> FeetSpec | None:
+    """Caster / leveling-foot plates welded under the bottom frame."""
+    if not questionary.confirm(
+        "Add caster / leveling-foot plates under the bottom frame?", default=default_on
+    ).unsafe_ask():
+        return None
+
+    thickness = _ask_length("Foot plate thickness", "0.25in")
+    alloy = questionary.text("Foot plate alloy:", default="A36").unsafe_ask()
+    size = _ask_length("Foot plate size (square side)", "4in")
+
+    kind = questionary.select(
+        "Mounting hole pattern:",
+        choices=[
+            questionary.Choice("square — 4-bolt pattern (+ optional centered stem hole)", "square"),
+            questionary.Choice("single — one centered stem hole (leveling foot / stem caster)", "single"),
+        ],
+    ).unsafe_ask()
+    if kind == "single":
+        hole = _ask_length("Stem hole diameter", "0.5in")
+        pattern = FootPattern(type="single", hole=hole)
+    else:
+        spacing = _ask_length("Bolt hole spacing (center-to-center)", "3in")
+        hole = _ask_length("Bolt hole diameter", "0.41in")
+        if questionary.confirm(
+            "Also cut a centered stem/leveling hole (accepts either mount)?", default=True
+        ).unsafe_ask():
+            center_hole = _ask_length("Centered stem hole diameter", "0.5in")
+        else:
+            center_hole = 0.0
+        pattern = FootPattern(type="square", spacing=spacing, hole=hole, center_hole=center_hole)
+
+    corners = questionary.confirm("One plate per corner?", default=True).unsafe_ask()
+    mid = None
+    if questionary.confirm(
+        "Add mid-span foot pairs (for long units)?", default=False
+    ).unsafe_ask():
+        count = int(questionary.text("How many positions?", default="1").unsafe_ask())
+        axis = questionary.select("Spaced along:", choices=["width", "depth"]).unsafe_ask()
+        mid = MidFeet(count=count, axis=axis)
+
+    return FeetSpec(
+        material=SheetMaterialSpec(alloy=alloy, thickness=thickness),
+        size=size,
+        pattern=pattern,
+        corners=corners,
+        mid=mid,
+    )
 
 
 def run_wizard(spec_path: Path | None, console: Console | None = None) -> None:
@@ -144,6 +221,9 @@ def run_wizard(spec_path: Path | None, console: Console | None = None) -> None:
                 ],
             )
 
+    plates = _ask_plates(level_names, default_on=bool(existing.plates if existing else False))
+    feet = _ask_feet(default_on=bool(existing.feet if existing else False))
+
     quantity = int(questionary.text("How many assemblies?", default="1").unsafe_ask())
 
     spec = BoxSpec(
@@ -159,6 +239,8 @@ def run_wizard(spec_path: Path | None, console: Console | None = None) -> None:
         topology=topology,
         blocking=blocking,
         siding=siding,
+        plates=plates,
+        feet=feet,
         quantity=quantity,
     )
 
@@ -166,12 +248,19 @@ def run_wizard(spec_path: Path | None, console: Console | None = None) -> None:
         questionary.text("Save spec as:", default=f"{name.lower().replace(' ', '-')}.yaml").unsafe_ask()
     )
     dump_spec(spec, out)
+    extras = ""
+    if plates:
+        extras += f"Deck plates: {', '.join(p.layer for p in plates)}\n"
+    if feet:
+        n = (4 if feet.corners else 0) + (2 * feet.mid.count if feet.mid else 0)
+        extras += f"Foot plates: {n} ({feet.pattern.type} pattern)\n"
     console.print(
         Panel(
             f"Spec written to [bold]{out}[/bold]\n"
             f"Tube: {profile.display_name}\n"
             f"Exterior: {height:g} x {width:g} x {depth:g} mm "
-            f"({inches(height):.1f} x {inches(width):.1f} x {inches(depth):.1f} in)\n\n"
+            f"({inches(height):.1f} x {inches(width):.1f} x {inches(depth):.1f} in)\n"
+            f"{extras}\n"
             f"Generate the cut list with:\n  [bold]weldbox generate {out}[/bold]",
             title="Done",
         )

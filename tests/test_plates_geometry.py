@@ -13,6 +13,7 @@ from weldbox.vendors import get_vendor
 pytestmark = pytest.mark.slow
 
 FIXTURE = Path(__file__).parent / "fixtures" / "winding_machine_cell.yaml"
+EXAMPLES = Path(__file__).parent.parent / "examples"
 
 
 @pytest.fixture(scope="module")
@@ -47,6 +48,43 @@ def test_plate_solid_valid_and_volume(planned):
     bb = solid.bounding_box()
     assert bb.min.Z == pytest.approx(38.1, abs=0.01)
     assert bb.max.Z == pytest.approx(38.1 + plate.thickness, abs=0.01)
+
+
+def test_assembly_colors_track_the_bom():
+    """Every member sharing a unique part (one STEP file) gets one color;
+    distinct parts get distinct colors. In the epoxy cell the posts and the
+    supports consolidate into the same part, so they must share a color."""
+    from weldbox.consolidate import consolidate_parts
+    from weldbox.dedupe import group_parts
+    from weldbox.features import plan_features as _pf
+    from weldbox.frame import resolve_frame as _rf
+    from weldbox.geometry.assembly import _assign_part_colors
+    from weldbox.panels.feet import plan_feet
+    from weldbox.panels.layout import consolidate_panels
+    from weldbox.spec import load_spec as _ls
+    from weldbox.vendors import get_vendor as _gv
+
+    spec = _ls(EXAMPLES / "epoxy_machine_cell.yaml")
+    frame = _rf(spec, _gv(spec.vendor).catalog())
+    _pf(frame, spec)
+    consolidate_parts(frame)
+    parts = group_parts(frame)
+    feet = plan_feet(spec)
+    consolidate_panels(feet, enabled=True)  # sets part_name in place
+
+    member_color, panel_color = _assign_part_colors(parts, feet)
+
+    # posts and supports are literally the same part -> same color
+    assert member_color["post-fl"] == member_color["support-base-top-front"]
+    # a full-width rail is a different part -> a different color
+    assert member_color["base-front-rail"] != member_color["post-fl"]
+    # every member is colored, and distinct parts have distinct colors
+    assert all(m.id in member_color for m in frame.members)
+    part_colors = [member_color[p.member_ids[0]] for p in parts]
+    assert len(set(part_colors)) == len(parts)
+    # all 6 feet are one part -> one color, distinct from the tube parts
+    assert len(panel_color) == 1
+    assert next(iter(panel_color.values())) not in part_colors
 
 
 def test_plate_clears_every_member(planned):

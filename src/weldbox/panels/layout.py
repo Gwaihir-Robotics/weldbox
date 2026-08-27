@@ -51,6 +51,7 @@ class Panel:
     corner_radius: float = 0.0
     holes: list[tuple[float, float, float]] = field(default_factory=list)  # (u, v, dia)
     cutouts: list[Cutout] = field(default_factory=list)  # plate notches/holes
+    part_name: str = ""  # unique part this panel belongs to (set by consolidate)
     # 3D placement (frame exterior corner of the panel, before margin)
     origin3d: Vec3 = (0.0, 0.0, 0.0)
     u_dir: Vec3 = (1.0, 0.0, 0.0)
@@ -154,6 +155,7 @@ def consolidate_panels(panels: list[Panel], enabled: bool = True) -> list[Panel]
                 if best is None or len(union) < best[0]:
                     best = (len(union), mu, mv, union)
             if best is None:
+                p.part_name = p.name  # cannot merge -> its own part
                 unique.append(p)
                 continue
             _, mu, mv, part_holes = best
@@ -172,6 +174,8 @@ def consolidate_panels(panels: list[Panel], enabled: bool = True) -> list[Panel]
             ref.name = stems.pop()
         else:
             ref.name = "-".join(names)
+        for p, _, _ in placements:  # every merged panel shares this part
+            p.part_name = ref.name
         unique.append(ref)
     return sorted(unique, key=lambda p: p.name)
 

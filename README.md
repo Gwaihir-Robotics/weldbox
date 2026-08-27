@@ -126,9 +126,13 @@ quantity: 5
   (e.g. `left-right.dxf`, qty 2). When hole patterns differ, the union is
   cut into both so the blank stays reversible; conflicting patterns stay
   separate parts.
-- In the assembly STEP, members are colored by role (posts slate, rails
-  gray, level rails teal, crosses orange, supports green, spanners purple)
-  and panels are translucent. The assembly is written as flat named
+- In the assembly STEP, colors track the **bill of materials**: every
+  member that consolidates into the same unique part (the same STEP file)
+  shares one color, and distinct parts get distinct colors — so the
+  assembly is a visual key to the cut list, and interchangeable members
+  (e.g. posts and supports that turn out to be the same part) read the same.
+  Sheet parts each get their own color too; siding stays translucent so you
+  can see the frame through it. The assembly is written as flat named
   products (one per member/panel) with colors on every face, which FreeCAD
   imports as individually selectable/hideable colored objects regardless
   of its STEP import preferences.
