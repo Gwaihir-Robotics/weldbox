@@ -197,6 +197,12 @@ def panel_layouts(
     hole_map: dict[str, list[tuple[Member, RivetHole]]],
 ) -> list[Panel]:
     assert spec.siding is not None
+    if spec.siding.fit == "inset":
+        from .inset import inset_layouts
+        return inset_layouts(frame, spec)
+    if spec.siding.fit == "opening_overlay":
+        from .opening_overlay import opening_overlay_layouts
+        return opening_overlay_layouts(frame, spec)
     margin = spec.siding.panel_margin
     frames = _face_frames(spec)
     panels: list[Panel] = []

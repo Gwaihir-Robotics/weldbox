@@ -82,10 +82,13 @@ def produce_outputs(
 
         panels = panel_layouts(frame, spec, hole_map)
     panels += plate_panels
+    # Stable per-instance geometry before consolidation mutates exemplar names/qty.
+    from dataclasses import asdict
+    panel_instances = [asdict(p) for p in panels]
     if panels:
         from .panels.layout import consolidate_panels
 
-        unique_panels = consolidate_panels(panels, enabled=spec.consolidate)
+        unique_panels = consolidate_panels(panels, enabled=spec.consolidate and not (spec.siding and spec.siding.fit in ("inset", "opening_overlay")))
 
     from .shipping import estimate_shipping
 
@@ -130,8 +133,26 @@ def produce_outputs(
             f"({len(panels)} panels/assembly)"
         )
 
+    if spec.siding and spec.siding.fit in ("inset", "opening_overlay"):
+        import json
+        from .geometry.assembly import panel_solid
+        from build123d import export_step
+        from .panels.layout import Panel
+        instance_dir = out_dir / "panel-instances"
+        instance_dir.mkdir(exist_ok=True)
+        for data in panel_instances:
+            if data['face'].startswith(('inset:','cover:')):
+                export_step(panel_solid(Panel(**data)), instance_dir / (data['name']+'.step'))
+        (out_dir / 'panel-layouts.json').write_text(json.dumps(panel_instances,indent=2)+'\n')
+        (out_dir / 'panel-fasteners.json').write_text(json.dumps({
+            'fastener': (spec.siding.inset or spec.siding.opening_overlay).fastener.model_dump(),
+            'quantity_per_assembly': sum(len(p['holes']) for p in panel_instances if p['face'].startswith(('inset:','cover:'))) - (len(spec.siding.opening_overlay.access_holes) if spec.siding.opening_overlay else 0),
+            'access_hole_count': len(spec.siding.opening_overlay.access_holes) if spec.siding.opening_overlay else 0,
+            'attachment': 'outer tube wall' if spec.siding.opening_overlay else 'welded receiver tabs',
+            'note': 'Grommets and plungers are separate purchases. Hole finish, retention, panel stiffness and temperature require validation.'
+        },indent=2)+'\n')
     if not skip_assembly:
-        export_assembly(frame, parts, solids, panels, out_dir / "assembly.step")
+        export_assembly(frame, parts, solids, panels, out_dir / "assembly.step", fixed_path=out_dir / "structure.step" if spec.siding and spec.siding.fit in ("inset", "opening_overlay") else None)
         console.print(f"[green]Wrote assembly STEP to {out_dir / 'assembly.step'} (open in FreeCAD)")
 
     write_manifest(out_dir, spec, frame, parts, filenames, panel_files, shipping)

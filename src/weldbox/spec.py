@@ -125,7 +125,59 @@ class AttachmentSpec(SpecModel):
     hole_clearance: LengthMM = 0.15
 
 
+class PanelFastenerSpec(SpecModel):
+    """Separate hole sizes and grip limits for a removable panel fastener."""
+    panel_hole: LengthMM = Field(gt=0)
+    receiver_hole: LengthMM = Field(gt=0)
+    grip_min: LengthMM = Field(gt=0)
+    grip_max: LengthMM = Field(gt=0)
+    panel_max: LengthMM = Field(gt=0)
+    grommet: str
+    plunger: str
+
+
+class InsetPanelSpec(SpecModel):
+    """Vertical rectangular openings; edge-welded receiver tabs on both sides.
+
+    split_heights are face Z coordinates, not dimensions relative to an opening.
+    Tab welds, panel stiffness and fastener retention remain application checks.
+    """
+    clearance: LengthMM = Field(default=2, gt=0)
+    recess: LengthMM = Field(default=10, ge=0)
+    split_heights: list[LengthMM] = []
+    fastener_spacing: LengthMM = Field(default=300, gt=0)
+    end_offset: LengthMM = Field(default=20, gt=0)
+    tab_projection: LengthMM = Field(default=25, gt=0)
+    tab_width: LengthMM = Field(default=40, gt=0)
+    tab_material: SheetMaterialSpec
+    fastener: PanelFastenerSpec
+
+
+class CoverAccessHoleSpec(SpecModel):
+    """Panel-only access hole, in face U/V coordinates; tube drilling is separate."""
+    face: Literal["left", "right", "front", "back"]
+    u: LengthMM = Field(ge=0)
+    v: LengthMM = Field(ge=0)
+    diameter: LengthMM = Field(gt=0)
+
+
+class OpeningOverlaySpec(SpecModel):
+    """Separate flat covers spanning each opening; fasteners enter the tube wall."""
+    clearance: LengthMM = Field(default=2, gt=0)
+    edge_overlap: LengthMM = Field(default=24, gt=0)
+    hole_offset: LengthMM = Field(default=12, gt=0)
+    top_extension: LengthMM = Field(default=0, ge=0)
+    access_holes: list[CoverAccessHoleSpec] = []
+    split_heights: list[LengthMM] = []
+    fastener_spacing: LengthMM = Field(default=300, gt=0)
+    end_offset: LengthMM = Field(default=20, gt=0)
+    fastener: PanelFastenerSpec
+
+
 class SidingSpec(SpecModel):
+    fit: Literal["overlay", "inset", "opening_overlay"] = "overlay"
+    inset: InsetPanelSpec | None = None
+    opening_overlay: OpeningOverlaySpec | None = None
     attachment: AttachmentSpec = AttachmentSpec()
     panels: list[PanelSpec] = []
     panel_margin: LengthMM = 0.0  # inset from frame exterior edge
@@ -210,6 +262,52 @@ class BoxSpec(SpecModel):
                 raise ValueError(
                     f"exterior {axis} {value:g}mm is too small for {tube:g}mm tube"
                 )
+        if self.siding:
+            siding = self.siding
+            if (siding.fit == "inset") != (siding.inset is not None):
+                raise ValueError("siding.inset is required exactly when fit is inset")
+            if (siding.fit == "opening_overlay") != (siding.opening_overlay is not None):
+                raise ValueError("siding.opening_overlay is required exactly when fit is opening_overlay")
+            if siding.opening_overlay:
+                cfg = siding.opening_overlay
+                if "attachment" in siding.model_fields_set or self.material.shape == "round" or siding.panel_margin != 0:
+                    raise ValueError("opening_overlay uses its own fastener, rectangular tube and zero panel_margin")
+                faces = [f for panel in siding.panels for f in panel.faces]
+                if len(faces) != len(set(faces)) or any(f in ("top", "bottom") for f in faces):
+                    raise ValueError("opening_overlay supports each vertical face once")
+                if isinstance(cfg, OpeningOverlaySpec):
+                    positions=[(h.face,h.u,h.v) for h in cfg.access_holes]
+                    if len(positions)!=len(set(positions)) or any(h.face not in faces for h in cfg.access_holes):
+                        raise ValueError("Cover access holes need unique positions on covered faces")
+                if len(cfg.split_heights) != len(set(cfg.split_heights)) or any(z <= 0 or z >= self.exterior.height for z in cfg.split_heights):
+                    raise ValueError("split_heights must be unique heights inside the frame")
+                for panel in siding.panels:
+                    grip = panel.material.thickness + self.material.wall
+                    if not cfg.fastener.grip_min <= grip <= cfg.fastener.grip_max or not 0 < panel.material.thickness <= cfg.fastener.panel_max:
+                        raise ValueError("panel plus tube wall outside fastener grip or panel limit")
+                if min(cfg.edge_overlap-cfg.hole_offset,cfg.end_offset) <= cfg.fastener.panel_hole/2+2:
+                    raise ValueError("panel holes need at least 2 mm edge ligament")
+            if siding.inset:
+                cfg = siding.inset
+                if "attachment" in siding.model_fields_set:
+                    raise ValueError("inset siding uses inset.fastener, not overlay attachment")
+                if self.material.shape == "round" or siding.panel_margin != 0:
+                    raise ValueError("inset siding requires rectangular tube and zero panel_margin")
+                if len(cfg.split_heights) != len(set(cfg.split_heights)) or any(z <= 0 or z >= self.exterior.height for z in cfg.split_heights):
+                    raise ValueError("split_heights must be unique heights inside the frame")
+                faces = [f for panel in siding.panels for f in panel.faces]
+                if len(faces) != len(set(faces)) or any(f in ("top", "bottom") for f in faces):
+                    raise ValueError("inset siding supports each vertical face once")
+                for panel in siding.panels:
+                    grip = panel.material.thickness + cfg.tab_material.thickness
+                    if not cfg.fastener.grip_min <= grip <= cfg.fastener.grip_max or not 0 < panel.material.thickness <= cfg.fastener.panel_max:
+                        raise ValueError("inset panel/tab thickness outside fastener grip or panel limit")
+                if cfg.tab_material.thickness <= 0 or cfg.end_offset < cfg.tab_width / 2:
+                    raise ValueError("positive tab thickness and end_offset >= half tab_width required")
+                if min(cfg.tab_projection, cfg.tab_width) <= cfg.fastener.receiver_hole + 4:
+                    raise ValueError("receiver hole needs at least 2 mm edge ligament")
+                if cfg.tab_projection / 2 - cfg.clearance <= cfg.fastener.panel_hole / 2 + 2:
+                    raise ValueError("panel hole needs at least 2 mm edge ligament")
         return self
 
 

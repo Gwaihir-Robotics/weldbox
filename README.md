@@ -182,3 +182,12 @@ published by RMFG as design-against reference material for their laser tube
 cutting service: <https://www.rmfg.com/docs/services/laser-tube-cutting>.
 It is included here for interoperability and remains theirs; weldbox is not
 affiliated with or endorsed by RMFG.
+
+### Removable inset panels
+
+Use `siding.fit: inset` for removable covers inside vertical frame openings, with
+separate welded receiver tabs and independently sized fastener holes. See
+[configuration, outputs and limits](docs/INSET_PANELS.md).
+
+For fastener holes directly in the tube, use `siding.fit: opening_overlay`:
+[flat opening covers without welded receiving tabs](docs/OPENING_COVERS.md).

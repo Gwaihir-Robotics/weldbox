@@ -139,14 +139,19 @@ def export_assembly(
     solids: dict,
     panels: Iterable[PanelLayout],
     path: Path,
+    *, fixed_path: Path | None = None,
 ) -> None:
     panels = list(panels)
     member_color, panel_color = _assign_part_colors(parts, panels)
     children = list(build_frame_compound(frame, member_color).children)
+    fixed = list(children)
     for panel in panels:
         rgb = panel_color[panel.part_name or panel.name]
-        children.append(panel_solid(panel, (*rgb, _panel_alpha(panel.face))))
+        placed = panel_solid(panel, (*rgb, _panel_alpha(panel.face)))
+        children.append(placed)
+        if not panel.face.startswith(("inset:", "cover:")): fixed.append(placed)
     _export_step_flat_colored(children, path)
+    if fixed_path is not None: _export_step_flat_colored(fixed, fixed_path)
 
 
 def _export_step_flat_colored(children: list[Part], path: Path) -> None:

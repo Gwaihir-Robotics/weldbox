@@ -224,7 +224,7 @@ def plan_rivet_holes(frame: FrameGraph, spec: BoxSpec) -> dict[str, list[tuple[M
     sided box face. Returns {box_face: [(member, hole), ...]} so the panel
     layout uses the *same* holes (single source of truth).
     """
-    if spec.siding is None or not spec.siding.panels:
+    if spec.siding is None or not spec.siding.panels or spec.siding.fit != "overlay":
         return {}
     att = spec.siding.attachment
     dia = att.rivet + att.hole_clearance
@@ -278,4 +278,8 @@ def plan_features(frame: FrameGraph, spec: BoxSpec) -> dict[str, list[tuple[Memb
     """Run all feature planning. Returns the per-box-face rivet hole map
     (consumed by panels.layout)."""
     plan_joint_features(frame, spec)
+    if spec.siding and spec.siding.fit == "opening_overlay":
+        from .panels.opening_overlay import opening_overlay_layouts
+        opening_overlay_layouts(frame, spec, drill=True)
+        return {}
     return plan_rivet_holes(frame, spec)
